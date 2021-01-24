@@ -27,7 +27,7 @@ public class GMTeleop extends OpMode {
 
     private BNO055IMU imu;
 
-    private double liftPosScale = 10, liftPowScale = 0.005;
+    private double liftPosScale = 25, liftPowScale = 0.0015;
     private double liftPosCurrent=0, liftPosDes=0, liftPosError=0, liftPow=0;
 
     // above initializes all the aspects we need to make our robot function
@@ -52,17 +52,19 @@ public class GMTeleop extends OpMode {
         imu.initialize(parameters);
 
         // this puts the motors in reverse
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // enable encoders on motors that have them
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
@@ -72,14 +74,14 @@ public class GMTeleop extends OpMode {
         float r1 = gamepad1.right_trigger;
         float r2 = gamepad1.left_trigger;
         float f1 = gamepad2.right_stick_y;
-        double power = 0;
 
         boolean indexRing = gamepad2.right_bumper;
-        boolean takein = gamepad2.b;
-        boolean takeout = gamepad2.a;
-        boolean releaseWobble = gamepad2.left_bumper;
+        boolean takein = gamepad2.a;
+        boolean takeout = gamepad2.b;
+        boolean grabWobble = gamepad2.left_bumper;
 
         telemetry.addData("Arm current position: ", arm.getCurrentPosition());
+        telemetry.addData("Arm error: ", liftPosError);
         telemetry.addData("Arm target position: ", liftPosDes);
         telemetry.update();
 
@@ -89,17 +91,44 @@ public class GMTeleop extends OpMode {
         float rightFrontPower = 0;
         float rightBackPower = 0;
 
-        // Handle regular movement
-        leftFrontPower += y1;
-        leftBackPower += y1;
-        rightFrontPower += y1;
-        rightBackPower += y1;
-
-        // Handle strafing movement
-        leftFrontPower += x1;
-        leftBackPower -= x1;
-        rightFrontPower -= x1;
-        rightBackPower += x1;
+       if (y1 > 0 && x1 == 0) {
+           leftFrontPower -= y1;
+           leftBackPower -= y1;
+           rightFrontPower -= y1;
+           rightBackPower -= y1;
+       } else if (y1 < 0 && x1 == 0) {
+           leftFrontPower -= y1;
+           leftBackPower -= y1;
+           rightFrontPower -= y1;
+           rightBackPower -= y1;
+       } else if (x1 > 0 && y1 == 0) {
+           leftFrontPower -= x1;
+           leftBackPower += x1;
+           rightFrontPower += x1;
+           rightBackPower -= x1;
+       } else if (x1 < 0 && y1 == 0) {
+           leftFrontPower -= x1;
+           leftBackPower += x1;
+           rightFrontPower += x1;
+           rightBackPower -= x1;
+       } else if (x1 > 0 && y1 > 0) { //backleft
+           leftBackPower -= y1;
+           rightFrontPower -= y1;
+       } else if (x1 < 0 && y1 < 0) { //forwardright
+           leftBackPower -= y1;
+           rightFrontPower -= y1;
+       }else if (x1 > 0 && y1 < 0) { //forwardleft
+           rightBackPower -= y1;
+           leftFrontPower -= y1;
+       } else if (x1 < 0 && y1 > 0) { //backright
+           rightBackPower -= y1;
+           leftFrontPower-= y1;
+       } else {
+           leftFrontPower = 0;
+           leftBackPower = 0;
+           rightFrontPower = 0;
+           rightBackPower = 0;
+       }
 
         // Handle clockwise turning movement
         leftFrontPower -= r1*0.50;
@@ -115,36 +144,29 @@ public class GMTeleop extends OpMode {
 
         if (takein == true) {
             intake.setPower(1.00);
-        } else {
-            intake.setPower(0.00);
-        }
-        if (takeout == true) {
+        } else if (takeout == true) {
             intake.setPower(-1.00);
         } else {
             intake.setPower(0.00);
         }
         if (indexRing == true) {
-            index.setPosition(0.75);
+            index.setPosition(0.35);
         } else {
-            index.setPosition(1.0);
+            index.setPosition(0.15);
         }
-        if (releaseWobble == true) {
-           botGrab.setPosition(0.40);
-           topGrab.setPosition(0.35);
-        } else {
+        if (grabWobble == true) {
             botGrab.setPosition(0.85);
             topGrab.setPosition(0.80);
-        }
-        if (f1 > 0) {
-            power = 0.5;
-            flywheel.setPower(power);
-            if(power > 0) {
-                double currentPower = flywheel.getPower();
-                double error = (power - currentPower);
-                flywheel.setPower(currentPower + error);
-            }
+        } else {
+            botGrab.setPosition(0.10);
+            topGrab.setPosition(0.05);
         }
         if (f1 < 0) {
+            flywheel.setPower(0.5);
+        } else {
+            flywheel.setPower(0.00);
+        }
+        if (f1 > 0) {
             flywheel.setPower(0.00);
         }
 
@@ -153,9 +175,11 @@ public class GMTeleop extends OpMode {
         liftPosDes += liftPosScale*gamepad2.left_stick_y;                       //input scale factor
         liftPosError = liftPosDes - liftPosCurrent;
         //        integrater += liftPosError;                                   //unnecessary
-        liftPow = Math.min(Math.max(liftPowScale*liftPosError, -1.00), 1.00);   //proportional gain
+        liftPow = Range.clip(liftPowScale*liftPosError, -0.5, 0.5);   //proportional gain
+        /*
         if(liftPow >= 1){ liftPosDes = liftPosCurrent+(1/liftPowScale); }       //AntiWindup Code
         if(liftPow <= -1) {liftPosDes = liftPosCurrent-(1/liftPowScale); }      //AntiWindup Code
+         */
         arm.setPower(liftPow);
 
         // Scale movement

@@ -134,17 +134,14 @@ public class GMAuto extends LinearOpMode {
              */
             if (zero > one && zero > four) {
                 // If 0 rings were detected, these methods will be executed
-                shootRing();
                 ZoneA();
             }
             else if (one > zero && one > four) {
                 // If 1 ring was detected, these methods will be executed
-                shootRing();
                 ZoneB();
             }
             else if (four > zero && four > one) {
                 // If 4 rings were detected, these methods will be executed
-                shootRing();
                 ZoneC();
             }
         }
@@ -156,96 +153,122 @@ public class GMAuto extends LinearOpMode {
     }
     // > Methods for larger lists of actions are written here <
 
-    // shootPowershot() is the method that will position the robot on the line and shoot at the powershots
-    public void shootRing()
-    {
-        startFlywheel(1.00);
-        ringIndex();
-        stopFlywheel();
-    }
     public void ZoneA()
     {
+        Trajectory shootPosition = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(65, 0, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(shootPosition);
+        startFlywheel(0.45);
+        sleep(1000);
+        ringIndex();
+        stopFlywheel();
+        drivetrain.turn(Math.toRadians(-90));
         Trajectory wobbleDelivery = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToConstantHeading(new Vector2d(-24, 60 ), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(18, 0, Math.toRadians(0)))
                 .build();
         drivetrain.followTrajectory(wobbleDelivery);
         wobbleDrop();
+        drivetrain.turn(Math.toRadians(-90));
         Trajectory wobblePickup = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(24, -36, Math.toRadians(180)), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(34, 0, Math.toRadians(0)))
                 .build();
         drivetrain.followTrajectory(wobblePickup);
         wobblePick();
         Trajectory wobbleDeliveryAgain = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(-24, 36, Math.toRadians(180)), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(-70, -20, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(wobbleDeliveryAgain);
+        wobbleDrop();
+        drivetrain.turn(Math.toRadians(-45));
+        Trajectory linePark = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(25, 0, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(linePark);
+    }
+    public void ZoneB()
+    {
+        Trajectory shootPosition = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(65, 0, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(shootPosition);
+        startFlywheel(0.45);
+        sleep(750);
+        ringIndex();
+        stopFlywheel();
+        Trajectory wobbleDelivery = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(12, -24, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(wobbleDelivery);
+        wobbleDrop();
+        drivetrain.turn(Math.toRadians(-150));
+        Trajectory wobblePickup = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(55, 0, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(wobblePickup);
+        wobblePick();
+        Trajectory wobbleDeliveryAgain = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(-55, 15, Math.toRadians(0)))
                 .build();
         drivetrain.followTrajectory(wobbleDeliveryAgain);
         wobbleDrop();
         Trajectory linePark = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToConstantHeading(new Vector2d(24, 12 ), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(linePark);
-
-    }
-    public void ZoneB()
-    {
-        Trajectory aroundRing = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToConstantHeading(new Vector2d(18, 48 ), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(aroundRing);
-        Trajectory wobbleDelivery = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToConstantHeading(new Vector2d(-24, 36 ), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(wobbleDelivery);
-        wobbleDrop();
-        Trajectory wobblePickup1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(24, -36, Math.toRadians(90)), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(wobblePickup1);
-        Trajectory wobblePickup2 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(-18, -48, Math.toRadians(90)), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(wobblePickup2);
-        wobblePick();
-        Trajectory wobbleDeliveryAgain1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(18, 48, Math.toRadians(90)), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(wobbleDeliveryAgain1);
-        Trajectory wobbleDeliveryAgain2 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(-24, 36, Math.toRadians(90)), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(wobbleDeliveryAgain2);
-        wobbleDrop();
-        Trajectory linePark = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToConstantHeading(new Vector2d(-12, -12 ), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(0, -30, Math.toRadians(0)))
                 .build();
         drivetrain.followTrajectory(linePark);
     }
     public void ZoneC()
     {
-        Trajectory wobbleDelivery1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToConstantHeading(new Vector2d(-24, 60 ), Math.toRadians(0))
+        Trajectory shootPositionRight = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(0, 24, Math.toRadians(0)))
                 .build();
-        drivetrain.followTrajectory(wobbleDelivery1);
-        Trajectory wobbleDelivery2 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .lineToLinearHeading(new Pose2d(0, 48, Math.toRadians(0)))
+        drivetrain.followTrajectory(shootPositionRight);
+        Trajectory shootPosition = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(65, 0, Math.toRadians(0)))
                 .build();
-        drivetrain.followTrajectory(wobbleDelivery2);
+        drivetrain.followTrajectory(shootPosition);
+        Trajectory shootPositionLeft = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(0, -24, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(shootPosition);
+
+        startFlywheel(0.45);
+        sleep(500);
+        ringIndex();
+        stopFlywheel();
+
+        drivetrain.turn(Math.toRadians(-45));
+        Trajectory ringPickupLeft = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(0, -24, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(ringPickupLeft);
+        Trajectory ringPickup = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(-24, 0, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(ringPickup);
+
+        drivetrain.intake.setPower(1.00);
+
+        Trajectory ringIntake = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(-10, 0, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(ringIntake);
+        Trajectory shootSecond = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(34, 24, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(shootSecond);
+
+        drivetrain.intake.setPower(0.00);
+        startFlywheel(0.45);
+        ringIndex();
+        stopFlywheel();
+        Trajectory wobbleDelivery = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(45, -72, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(wobbleDelivery);
         wobbleDrop();
-        Trajectory wobblePickup1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .lineToLinearHeading(new Pose2d(0, -48, Math.toRadians(0)))
-                .build();
-        drivetrain.followTrajectory(wobblePickup1);
-        Trajectory wobblePickup2 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(24, -36, Math.toRadians(180)), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(wobblePickup2);
-        wobblePick();
-        Trajectory wobbleDeliveryAgain = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToLinearHeading(new Pose2d(-24, 36, Math.toRadians(180)), Math.toRadians(0))
-                .build();
-        drivetrain.followTrajectory(wobbleDeliveryAgain);
         Trajectory linePark = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
-                .splineToConstantHeading(new Vector2d(24, 12 ), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(-50, 0, Math.toRadians(0)))
                 .build();
         drivetrain.followTrajectory(linePark);
     }
@@ -253,49 +276,58 @@ public class GMAuto extends LinearOpMode {
     public void ringIndex()
     {
         // Push ring out with the servo arm
-        drivetrain.index.setPosition(0.75);
+        drivetrain.index.setPosition(0.325);
         sleep(100);
         // Pull servo arm back in
-        drivetrain.index.setPosition(1.00);
+        drivetrain.index.setPosition(0.15);
         // Reset flywheel to max power
-        startFlywheel(1.00);
+        startFlywheel(0.475);
+        sleep(400);
+
+        drivetrain.index.setPosition(0.325);
         sleep(100);
-        drivetrain.index.setPosition(0.75);
+        drivetrain.index.setPosition(0.15);
+        startFlywheel(0.50);
+        sleep(400);
+
+        drivetrain.index.setPosition(0.325);
         sleep(100);
-        drivetrain.index.setPosition(1.00);
-        startFlywheel(1.00);
-        sleep(100);
-        drivetrain.index.setPosition(0.75);
-        sleep(100);
-        drivetrain.index.setPosition(1.00);
-        startFlywheel(1.00);
-        sleep(100);
+        drivetrain.index.setPosition(0.15);
     }
     public void wobbleDrop()
     {
         // The wobble arm is brought down, then stopped
         drivetrain.arm.setPower(0.75);
-        sleep(100);
+        sleep(400);
         drivetrain.arm.setPower(0.00);
         // The servo grabber releases the wobble
-        drivetrain.botGrab.setPosition(0.40);
-        drivetrain.topGrab.setPosition(0.35);
-        sleep(200);
+        drivetrain.botGrab.setPosition(0.10);
+        drivetrain.topGrab.setPosition(0.05);
+        sleep(400);
+        drivetrain.arm.setPower(-0.75);
+        sleep(250);
+        drivetrain.arm.setPower(0.00);
     }
     public void wobblePick()
     {
+        drivetrain.arm.setPower(0.75);
+        sleep(400);
+        drivetrain.arm.setPower(0.00);
+        Trajectory wobblePickupRight = drivetrain.trajectoryBuilder(new Pose2d(0, 0, 0))
+                .lineToLinearHeading(new Pose2d(0, 10, Math.toRadians(0)))
+                .build();
+        drivetrain.followTrajectory(wobblePickupRight);
         drivetrain.botGrab.setPosition(0.85);
         drivetrain.topGrab.setPosition(0.80);
-        sleep(200);
+        sleep(600);
         drivetrain.arm.setPower(-0.75);
-        sleep(100);
+        sleep(400);
         drivetrain.arm.setPower(0.00);
     }
     // Runs the flywheel at any desired power
     public void startFlywheel(double power)
     {
         drivetrain.flywheel.setPower(power);
-        sleep( 100);
         // The program will double check the power and make sure its is correct
         if(power > 0) {
             double currentPower = drivetrain.flywheel.getPower();

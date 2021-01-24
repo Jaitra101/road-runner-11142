@@ -145,7 +145,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
-        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+       //  BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "lf");
         leftRear = hardwareMap.get(DcMotorEx.class, "lr");
@@ -158,9 +158,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         topGrab = hardwareMap.servo.get("top_grab");
         arm = hardwareMap.dcMotor.get("arm");
 
-        index.setPosition(0.75);
-        botGrab.setPosition(0.75);
-        topGrab.setPosition(0.25);
+        index.setPosition(0.15);
+        botGrab.setPosition(0.85);
+        topGrab.setPosition(0.80);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -184,7 +184,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
