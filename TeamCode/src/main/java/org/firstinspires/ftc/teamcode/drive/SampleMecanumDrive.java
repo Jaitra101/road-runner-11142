@@ -158,8 +158,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         topGrab = hardwareMap.servo.get("top_grab");
         arm = hardwareMap.dcMotor.get("arm");
 
-        index.setPosition(0.15);
-        botGrab.setPosition(0.85);
+        index.setPosition(0.05);
+        botGrab.setPosition(0.90);
         topGrab.setPosition(0.80);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -184,6 +184,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
